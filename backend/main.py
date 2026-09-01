@@ -2,8 +2,8 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import asyncio
 import json
 
-from attacker import AIAttacker
-from telemetry import TelemetryGenerator
+from backend.attacker import AIAttacker
+from backend.telemetry import TelemetryGenerator
 
 app = FastAPI()
 
