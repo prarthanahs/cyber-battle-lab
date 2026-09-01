@@ -9,6 +9,7 @@ interface SimulationStore {
   handleIncomingMessage: (msg: SocketMessage) => void;
   revealHint: () => void;
   resetHints: () => void;
+  resolveDecision: () => void;
 }
 
 export const useSimulationStore = create<SimulationStore>((set, get) => ({
@@ -28,4 +29,8 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
 
   revealHint: () => set((state) => ({ hintsUsedCount: state.hintsUsedCount + 1 })),
   resetHints: () => set({ hintsUsedCount: 0 }),
+  
+
+// inside the create(...) object, alongside your other actions
+resolveDecision: () => set({ isPaused: false, activeDecision: null }),
 }));

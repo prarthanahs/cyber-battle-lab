@@ -124,19 +124,32 @@ export default App
 
 import { useTelemetrySocket } from './hooks/useTelemetrySocket';
 import { useSimulationStore } from './store/simulationStore';
+import { DecisionModal } from './components/decision/DecisionModal';
 
 function App() {
-  useTelemetrySocket('ws://localhost:8000');
+  const { sendAction } = useTelemetrySocket('ws://localhost:8000');
   const logs = useSimulationStore((s) => s.logs);
   const isPaused = useSimulationStore((s) => s.isPaused);
   const activeDecision = useSimulationStore((s) => s.activeDecision);
+  const hintsUsedCount = useSimulationStore((s) => s.hintsUsedCount);
+  const resolveDecision = useSimulationStore((s) => s.resolveDecision);
+  const resetHints = useSimulationStore((s) => s.resetHints);
+
+  const handleDecisionSubmit = (optionId: string) => {
+    if (!activeDecision) return;
+    sendAction(activeDecision.decisionId, optionId, hintsUsedCount);
+    resolveDecision();
+    resetHints();
+  };
 
   return (
     <div style={{ padding: 20, fontFamily: 'monospace' }}>
       <h2>Telemetry Feed (paused: {String(isPaused)})</h2>
-      {activeDecision && <pre>{JSON.stringify(activeDecision, null, 2)}</pre>}
+      <DecisionModal decision={activeDecision} onSubmit={handleDecisionSubmit} />
       {logs.map((log) => (
-        <div key={log.id}>{log.timestamp} — {log.endpoint} — {log.statusCode}</div>
+        <div key={log.id}>
+          {log.timestamp} — {log.endpoint} — {log.statusCode}
+        </div>
       ))}
     </div>
   );
