@@ -1,4 +1,4 @@
-import { useState } from 'react'
+/*import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -120,3 +120,26 @@ function App() {
 }
 
 export default App
+*/
+
+import { useTelemetrySocket } from './hooks/useTelemetrySocket';
+import { useSimulationStore } from './store/simulationStore';
+
+function App() {
+  useTelemetrySocket('ws://localhost:8000');
+  const logs = useSimulationStore((s) => s.logs);
+  const isPaused = useSimulationStore((s) => s.isPaused);
+  const activeDecision = useSimulationStore((s) => s.activeDecision);
+
+  return (
+    <div style={{ padding: 20, fontFamily: 'monospace' }}>
+      <h2>Telemetry Feed (paused: {String(isPaused)})</h2>
+      {activeDecision && <pre>{JSON.stringify(activeDecision, null, 2)}</pre>}
+      {logs.map((log) => (
+        <div key={log.id}>{log.timestamp} — {log.endpoint} — {log.statusCode}</div>
+      ))}
+    </div>
+  );
+}
+
+export default App;
